@@ -1,0 +1,100 @@
+---
+title: "testing python code"
+format:
+  html:
+    self-contained: true
+    embed-resources: true
+    page-layout: full
+    code-fold: true
+---
+
+
+
+following code puts all python, md and qmd into a text file. 
+ - Will target the streamlit_app folder
+ - purpose is to Control F and serach for all instencies of a string/text/variable 
+
+
+```{python}
+#  following code puts all python, md and qmd into a text file. 
+import os
+
+# Target folder
+folder_path = r"C:/git/math488/fa25_hafb/streamlit_app"
+
+output_file = os.path.join(folder_path, "combined_files.txt")
+
+# File extensions in the order to combine
+extensions = [".py", ".md", ".qmd"]
+
+with open(output_file, "w", encoding="utf-8") as outfile:
+    for ext in extensions:
+        # List only top-level files in the folder
+        for file in sorted(os.listdir(folder_path)):
+            if file.lower().endswith(ext):
+                file_path = os.path.join(folder_path, file)
+                outfile.write(f"\f\n===== {file} =====\n\n")  # Page break + header
+                with open(file_path, "r", encoding="utf-8") as infile:
+                    outfile.write(infile.read())
+                    outfile.write("\n\n")
+
+print(f"Combined file created at: {output_file}")
+```
+
+
+
+
+```{python}
+
+#  following code puts all python, md and qmd into a text file. 
+import os
+
+# Target folder
+folder_path = r"C:/git/math488/fa25_hafb/streamlit_app"
+
+output_file = os.path.join(folder_path, "combined_files.txt")
+
+# File extensions in the order to combine
+extensions = [".py", ".md", ".qmd"]
+
+with open(output_file, "w", encoding="utf-8") as outfile:
+    for ext in extensions:
+        # List only top-level files in the folder
+        skip_files = {"TODO.md", "README.md", "notes.md"} # can be empty or 1 or 2. sample: "README.md", "notes.md
+
+        for file in sorted(os.listdir(folder_path)):
+            if file in skip_files:
+                continue
+            
+            file_path = os.path.join(folder_path, file)
+            
+            # Only process files (not directories)
+            if os.path.isfile(file_path) and file.lower().endswith(ext):
+                outfile.write(f"\f\n===== {file} =====\n\n")
+                with open(file_path, "r", encoding="utf-8") as infile:
+                    outfile.write(infile.read())
+                    outfile.write("\n\n")
+        
+        # Now add files from ui folder (only top-level files, no subfolders)
+        ui_folder = os.path.join(folder_path, "ui")
+        if os.path.exists(ui_folder):
+            for file in sorted(os.listdir(ui_folder)):
+                file_path = os.path.join(ui_folder, file)
+                # Only process files (skip __pycache__ and other directories)
+                if os.path.isfile(file_path) and file.lower().endswith(ext):
+                    outfile.write(f"\f\n===== ui/{file} =====\n\n")
+                    with open(file_path, "r", encoding="utf-8") as infile:
+                        outfile.write(infile.read())
+                        outfile.write("\n\n")
+
+print(f"Combined file created at: {output_file}")
+
+```
+
+
+
+
+
+
+
+

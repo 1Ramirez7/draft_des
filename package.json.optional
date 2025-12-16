@@ -1,0 +1,11 @@
+// This is not used in the project. It can be used to read mermaid charts in a local repository. But Github and most other markdown displays already
+// autodetect mermaid charts and display them. So opening the relevant md in github or using a markdown preview extension that is approved within HAFB
+// will display the charts correctly.
+
+
+
+// {
+//   "dependencies": {
+//     "mermaid": "^11.12.0"
+//   }
+// }
