@@ -41,11 +41,43 @@ for tab, (title, filename) in zip(tabs, docs.items()):
         if doc_path.exists():
             # Handle PDF files differently from markdown files
             if filename.endswith('.pdf'):
-                # Read PDF as binary and display in iframe
-                with open(doc_path, "rb") as f:
-                    base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-                pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>'
-                st.markdown(pdf_display, unsafe_allow_html=True)
+                # Quick test: embed the PDF from the public GitHub raw URL in an iframe.
+                # Use the repository raw URL for the flowchart (user-provided).
+                if filename == 'flowchart.pdf':
+                    # Raw URL (pinned to the commit the user supplied)
+                    pdf_url = (
+                        "https://raw.githubusercontent.com/1Ramirez7/draft_des/"
+                        "2e0dff8f22a5450e08dcfd3d1a87594933c5af13/docs/flowchart.pdf"
+                    )
+                    try:
+                        import streamlit.components.v1 as components
+
+                        components.iframe(pdf_url, width=1000, height=800)
+                    except Exception:
+                        # Fallback to download button if embedding fails on runtime
+                        with open(doc_path, "rb") as f:
+                            pdf_bytes = f.read()
+
+                        st.download_button(
+                            label=f"Download {filename}",
+                            data=pdf_bytes,
+                            file_name=filename,
+                            mime="application/pdf",
+                        )
+                        st.markdown(
+                            "Could not embed PDF via iframe — use the download button above.",
+                        )
+                else:
+                    # Non-flowchart PDFs: provide a download button (reliable)
+                    with open(doc_path, "rb") as f:
+                        pdf_bytes = f.read()
+
+                    st.download_button(
+                        label=f"Download {filename}",
+                        data=pdf_bytes,
+                        file_name=filename,
+                        mime="application/pdf",
+                    )
             else:
                 # Display markdown files
                 content = doc_path.read_text(encoding="utf-8")
