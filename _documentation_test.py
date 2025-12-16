@@ -70,10 +70,15 @@ for tab, (title, filename) in zip(tabs, docs.items()):
     with tab:
         doc_path = DOCS_DIR / filename
         
-        # Handle flowchart.md with mermaid rendering
-        if filename == "flowchart.md" and doc_path.exists():
-            content = doc_path.read_text(encoding="utf-8")
-            process_markdown_with_mermaid(content)
+        # Handle flowchart.md from GitHub
+        if filename == "flowchart.md":
+            try:
+                response = requests.get("https://raw.githubusercontent.com/1Ramirez7/draft_des/refs/heads/main/docs/flowchart.md")
+                response.raise_for_status()
+                content = response.text
+                process_markdown_with_mermaid(content)
+            except Exception as e:
+                st.error(f"Error loading flowchart from GitHub: {e}")
         elif doc_path.exists():
             # Handle PDF files differently from markdown files
             if filename.endswith('.pdf'):
