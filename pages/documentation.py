@@ -70,8 +70,8 @@ for tab, (title, filename) in zip(tabs, docs.items()):
     with tab:
         doc_path = DOCS_DIR / filename
         
-        # Handle flowchart.md with mermaid rendering
-        if filename == "flowchart.md" and doc_path.exists():
+        # Handle files with mermaid diagrams
+        if filename in ["flowchart.md", "uml-classes.md"] and doc_path.exists():
             content = doc_path.read_text(encoding="utf-8")
             process_markdown_with_mermaid(content)
         elif doc_path.exists():
