@@ -41,11 +41,24 @@ for tab, (title, filename) in zip(tabs, docs.items()):
         if doc_path.exists():
             # Handle PDF files differently from markdown files
             if filename.endswith('.pdf'):
-                # Read PDF as binary and display in iframe
+                # Provide a download button for the PDF (more reliable across browsers)
+                # and an optional "open in new tab" link. Embedding PDFs via
+                # data: URLs in iframes can be blocked by Chrome for security reasons.
                 with open(doc_path, "rb") as f:
-                    base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-                pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>'
-                st.markdown(pdf_display, unsafe_allow_html=True)
+                    pdf_bytes = f.read()
+
+                st.download_button(
+                    label=f"Download {filename}",
+                    data=pdf_bytes,
+                    file_name=filename,
+                    mime="application/pdf",
+                )
+
+                # Optional: provide a fallback link that opens the PDF in a new tab.
+                # Note: some browsers (Chrome) may still block opening data URLs in a tab.
+                pdf_b64 = base64.b64encode(pdf_bytes).decode('utf-8')
+                view_link = f'<a href="data:application/pdf;base64,{pdf_b64}" target="_blank" rel="noopener">Open PDF in new tab</a>'
+                st.markdown(view_link, unsafe_allow_html=True)
             else:
                 # Display markdown files
                 content = doc_path.read_text(encoding="utf-8")
