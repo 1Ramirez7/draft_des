@@ -812,7 +812,7 @@ class SimulationEngine:
         # Get the part's row from sim_df
         part_row = self.part_manager.get_part(sim_id)
         
-        # Verify correct event type. (add code so it logs the event types, and obviously when error)
+        # Verify correct event type. (add code so it logs the event types, and when error)
         if part_row['event_path'] == 'IC_IjCF':
             assert part_row['condition_f_start'] == 0, \
                 f"IC_IjCF event must have condition_f_start=0, got {part_row['condition_f_start']}"

@@ -25,6 +25,7 @@ docs = {
     "Architecture": "architecture.md",
     "Development": "development.md",
     "Event Types": "event_type.md",
+    "Brain of Model": "Brain_of_Model.md",
     "Flowchart": "flowchart.md",
     "Mathematical Specification": "mathematical-specification.md",
     "Simulation Methodology": "simulation-methodology.md",
