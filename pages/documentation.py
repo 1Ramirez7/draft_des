@@ -6,6 +6,9 @@ Documentation page displaying model architecture, development, and mathematical 
 import streamlit as st
 from pathlib import Path
 import base64
+import requests
+import re
+import streamlit.components.v1 as components
 
 st.set_page_config(
     page_title="Documentation - DES",
@@ -26,11 +29,39 @@ docs = {
     "Architecture": "architecture.md",
     "Development": "development.md",
     "Event Types": "event_type.md",
-    "Flowchart": "flowchart.pdf",
+    "Flowchart": "flowchart.md",
     "Mathematical Specification": "mathematical-specification.md",
     "Simulation Methodology": "simulation-methodology.md",
     "UML Classes": "uml-classes.md",
 }
+
+def render_mermaid(mermaid_code):
+    """Render a mermaid diagram using HTML/JS"""
+    html_code = f"""
+    <div class="mermaid" style="background-color: white; padding: 20px; border-radius: 5px;">
+        {mermaid_code}
+    </div>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({{ startOnLoad: true }});
+    </script>
+    """
+    components.html(html_code, height=600, scrolling=True)
+
+def process_markdown_with_mermaid(content):
+    """Process markdown content and render mermaid diagrams separately"""
+    # Split content by mermaid blocks
+    mermaid_pattern = r'```mermaid\n(.*?)```'
+    parts = re.split(mermaid_pattern, content, flags=re.DOTALL)
+    
+    for i, part in enumerate(parts):
+        if i % 2 == 0:
+            # Regular markdown content
+            if part.strip():
+                st.markdown(part)
+        else:
+            # Mermaid diagram
+            render_mermaid(part)
 
 # Create tabs for each document
 tabs = st.tabs(list(docs.keys()))
@@ -38,46 +69,19 @@ tabs = st.tabs(list(docs.keys()))
 for tab, (title, filename) in zip(tabs, docs.items()):
     with tab:
         doc_path = DOCS_DIR / filename
-        if doc_path.exists():
+        
+        # Handle flowchart.md from GitHub
+        if filename == "flowchart.md" and doc_path.exists():
+            content = doc_path.read_text(encoding="utf-8")
+            process_markdown_with_mermaid(content)
+        elif doc_path.exists():
             # Handle PDF files differently from markdown files
             if filename.endswith('.pdf'):
-                # Quick test: embed the PDF from the public GitHub raw URL in an iframe.
-                # Use the repository raw URL for the flowchart (user-provided).
-                if filename == 'flowchart.pdf':
-                    # Raw URL (pinned to the commit the user supplied)
-                    pdf_url = (
-                        "https://raw.githubusercontent.com/1Ramirez7/draft_des/"
-                        "2e0dff8f22a5450e08dcfd3d1a87594933c5af13/docs/flowchart.pdf"
-                    )
-                    try:
-                        import streamlit.components.v1 as components
-
-                        components.iframe(pdf_url, width=1000, height=800)
-                    except Exception:
-                        # Fallback to download button if embedding fails on runtime
-                        with open(doc_path, "rb") as f:
-                            pdf_bytes = f.read()
-
-                        st.download_button(
-                            label=f"Download {filename}",
-                            data=pdf_bytes,
-                            file_name=filename,
-                            mime="application/pdf",
-                        )
-                        st.markdown(
-                            "Could not embed PDF via iframe — use the download button above.",
-                        )
-                else:
-                    # Non-flowchart PDFs: provide a download button (reliable)
-                    with open(doc_path, "rb") as f:
-                        pdf_bytes = f.read()
-
-                    st.download_button(
-                        label=f"Download {filename}",
-                        data=pdf_bytes,
-                        file_name=filename,
-                        mime="application/pdf",
-                    )
+                # Read PDF as binary and display in iframe
+                with open(doc_path, "rb") as f:
+                    base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+                pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>'
+                st.markdown(pdf_display, unsafe_allow_html=True)
             else:
                 # Display markdown files
                 content = doc_path.read_text(encoding="utf-8")
@@ -87,5 +91,3 @@ for tab, (title, filename) in zip(tabs, docs.items()):
 
 st.markdown("---")
 st.page_link("main.py", label="← Back to Home", icon="🏠")
-
-# testing _2_... 7393a0d 

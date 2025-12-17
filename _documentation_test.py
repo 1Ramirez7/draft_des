@@ -98,4 +98,3 @@ st.markdown("---")
 st.page_link("main.py", label="← Back to Home", icon="🏠")
 
 
-# this file is before the push 7730c6e. this file not needed just for record now
