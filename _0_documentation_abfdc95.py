@@ -56,4 +56,4 @@ for tab, (title, filename) in zip(tabs, docs.items()):
 st.markdown("---")
 st.page_link("main.py", label="← Back to Home", icon="🏠")
 
-# same as 0 - abfdc95
+# same as 1 - 2e0dff8
