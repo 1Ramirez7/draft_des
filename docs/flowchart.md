@@ -1,6 +1,6 @@
 # Simulation Flow Diagrams
 
-testing 1 
+**[Download PDF to see Mermaid diagrams](https://github.com/1Ramirez7/draft_des/raw/main/docs/flowchart.pdf)**
 
 This document shows the business logic flow of the aircraft parts simulation system, which tracks two interconnected lifecycles: **Part Lifecycle** and **Aircraft Lifecycle**.
 
