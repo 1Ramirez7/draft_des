@@ -96,3 +96,8 @@ for tab, (title, filename) in zip(tabs, docs.items()):
 
 st.markdown("---")
 st.page_link("main.py", label="← Back to Home", icon="🏠")
+
+
+# so i went back and check all pushes and now problem persisted
+# i made have made the mistake to only check changes locally
+# and why i miss the syntax error when deployed
