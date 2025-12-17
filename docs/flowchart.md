@@ -11,7 +11,7 @@ The simulation tracks two interconnected lifecycles that work together to model 
 
 ## Part Lifecycle Flow
 
-```{mermaid}
+```mermaid
 flowchart TD
     A[Fleet Stage<br/>Part on aircraft] -->|fleet_end event| B[Condition F<br/>Failure detected]
     
@@ -69,7 +69,7 @@ flowchart TD
 
 ## Aircraft Lifecycle Flow
 
-```{mermaid}
+```mermaid
 flowchart TD
     A[Fleet Stage<br/>Part operating] -->|fleet_complete event| B{Part Available<br/>in Condition A?}
     
@@ -96,7 +96,7 @@ flowchart TD
 
 ## Combined System Flow (Simplified)
 
-```{mermaid}
+```mermaid
 flowchart TD
     subgraph "Part Lifecycle"
         P1[Fleet] --> P2[Condition F]
