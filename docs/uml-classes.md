@@ -1,6 +1,6 @@
 # Class Architecture
 
- testing 1
+**[Download PDF to see Mermaid diagrams](https://github.com/1Ramirez7/draft_des/raw/main/docs/uml-classes.pdf)**
  
 This document describes the class structure of the simulation system.
 
