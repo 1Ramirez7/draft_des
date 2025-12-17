@@ -5,8 +5,6 @@ Documentation page displaying model architecture, development, and mathematical 
 """
 import streamlit as st
 from pathlib import Path
-import base64
-import requests
 import re
 import streamlit.components.v1 as components
 
@@ -38,13 +36,20 @@ docs = {
 def render_mermaid(mermaid_code):
     """Render a mermaid diagram using HTML/JS"""
     html_code = f"""
-    <div class="mermaid" style="background-color: white; padding: 20px; border-radius: 5px;">
-        {mermaid_code}
-    </div>
-    <script type="module">
-        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({{ startOnLoad: true }});
-    </script>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <script type="module">
+            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+            mermaid.initialize({{ startOnLoad: true }});
+        </script>
+    </head>
+    <body style="margin: 0; padding: 0;">
+        <div class="mermaid">
+{mermaid_code}
+        </div>
+    </body>
+    </html>
     """
     components.html(html_code, height=600, scrolling=True)
 
@@ -71,29 +76,18 @@ for tab, (title, filename) in zip(tabs, docs.items()):
         doc_path = DOCS_DIR / filename
         
         # Handle files with mermaid diagrams
-        if filename in ["flowchart.md", "uml-classes.md"] and doc_path.exists():
+        if filename in ["flowchart.md", "uml-classes.md"]:
             content = doc_path.read_text(encoding="utf-8")
             process_markdown_with_mermaid(content)
-        elif doc_path.exists():
-            # Handle PDF files differently from markdown files
-            if filename.endswith('.pdf'):
-                # Read PDF as binary and display in iframe
-                with open(doc_path, "rb") as f:
-                    base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-                pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>'
-                st.markdown(pdf_display, unsafe_allow_html=True)
-            else:
-                # Display markdown files
-                content = doc_path.read_text(encoding="utf-8")
-                st.markdown(content)
         else:
-            st.error(f"Documentation file not found: {filename}")
+            # Handle regular markdown files
+            content = doc_path.read_text(encoding="utf-8")
+            st.markdown(content)
 
 st.markdown("---")
 st.page_link("main.py", label="← Back to Home", icon="🏠")
 
-# this file is same as last push "testing pdf bug:" 7730c6e 
-# this one just includes the uml file as well. 
-# no other differences
 
-# same as last file, this one has a syntax error 
+# this is the file where i start to remove the pdf checking
+# realize erros happen before this push so then doing this prechecking im doing now
+# is not working out because i thought code properly work before i started removing pdf checking
