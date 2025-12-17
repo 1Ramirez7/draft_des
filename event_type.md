@@ -1,144 +1,183 @@
 # Event Types Reference
 
+All events by the model log event types in the `event_type` field. 
+
+- Serves to show path for each Aircraft and Part cycles. 
+- Helps debugging by tracking 1st, last and all events recorded for a single cycle
 
 
 ## INITIALIZATION PHASE (`initialization.py`)
 
-### 1. event_ic_iz_fs_fe - Initialize Fleet Start old event_ic_iz_fs_fe
-- `IC_IZ_FS_FE` = part_manager, ac_manager
-- PATH: fleet_start > fleet_end
+### 1. event_ic_iz_fs_fe - Initialize Fleet Start
+- **Function**: `event_ic_iz_fs_fe()`
+- **Event Type**: `IC_IZ_FS_FE`
+- **Managers**: part_manager, ac_manager
+- **PATH**: fleet_start > fleet_end
 
 ### 2. event_ic_ms - Inject Starting MICAP Aircraft
-- `IC_MS` = ac_manager, micap_state
-- PATH: micap_start
+- **Function**: `event_ic_ms()`
+- **Event Type**: `IC_MS`
+- **Managers**: ac_manager, micap_state
+- **PATH**: micap_start
 
 ### 3. event_ic_ijd - Inject Depot Parts
-- `IC_IjD` = part_manager
-- PATH: depot_start > depot_end
+- **Function**: `event_ic_ijd()`
+- **Event Type**: `IC_IjD`
+- **Managers**: part_manager
+- **PATH**: depot_start > depot_end
 
 ### 4. event_ic_ijcf - Inject Condition F Parts
-- `IC_IjCF` = part_manager
-- path: condition_f_start
+- **Function**: `event_ic_ijcf()`
+- **Event Type**: `IC_IjCF`
+- **Managers**: part_manager
+- **PATH**: condition_f_start
 
 ### 5. event_ic_ijca - Inject Condition A Parts
-- `IC_IjCA` = part_manager, cond_a_state
-- path: condition_a_start
+- **Function**: `event_ic_ijca()`
+- **Event Type**: `IC_IjCA`
+- **Managers**: part_manager, cond_a_state
+- **PATH**: condition_a_start
 
 ### 6. eventm_ic_izca_cr - Resolve Initial MICAP with CA Parts
-- `IC_MS_IE` = ac_manager
-- PATH: micap_start > micap_end > install_start > install_end
-- `IC_CAS_IE` = part_manager
-- path:condition_a_start > condition_a_end > install_start > install_end
-- `IC_CAP_FS_FE` = part_manager
-- PATH: install_end > fleet_start > fleet_end
-- `IC_MAC_FS_FE` = ac_manager
-- PATH: install_end > fleet_start > fleet_end
+- **Function**: `eventm_ic_izca_cr()`
+- **Event Types**:
+  - `IC_MS_IE` (ac_manager)
+    - **PATH**: micap_start > micap_end > install_start > install_end
+  - `IC_CAS_IE` (part_manager)
+    - **PATH**: condition_a_start > condition_a_end > install_start > install_end
+  - `IC_CAP_FS_FE` (part_manager)
+    - **PATH**: install_end > fleet_start > fleet_end
+  - `IC_MAC_FS_FE` (ac_manager)
+    - **PATH**: install_end > fleet_start > fleet_end
 
 ### 7. eventm_ic_fe_cf - Fleet End to Condition F
-- `IC_FE_CF` = part_manager
-- PATH: fleet_end > fleet_start
+- **Function**: `eventm_ic_fe_cf()`
+- **Event Type**: `IC_FE_CF`
+- **Managers**: part_manager
+- **PATH**: fleet_end > condition_f_start
 
 ---
 
 ## SIMULATION ENGINE PHASE (`simulation_engine.py`)
 
+### 8. handle_part_completes_depot - Part Finishes Depot
+- **Function**: `handle_part_completes_depot(sim_id)`
+- **Triggered by**: `depot_complete` event
 
+**CASE A1: No MICAP**
+- **Event Type**: `DE_CA`
+- **Managers**: part_manager, cond_a_state
+- **PATH**: depot_end > condition_a_start
 
-### 9. handle_part_completes_depot - Part Finishes Depot
-
-No MICAP 
-- `DE_CA` = part_manager, cond_a_state
-- PATH: depot_end > condition_a_start
-
-MICAP
-- `DE_DMR_IE` = part_manager
-- PATH: depot_end > install_start > install_end (cycle ends)
-- `ME_DMR_IE` = ac_manager
-- PATH: micap_End > install_start > install_end
-
-- `DMR_CR_FS_FE` = ac_manager, part_manager
-- PATH: fleet_start > fleet_end
-- To indicate AIRCRAFT & PART was from MICAP resolved by DE part
+**CASE A2: MICAP exists**
+- **Event Type (Part)**: `DE_DMR_IE`
+  - **PATH**: depot_end > install_start > install_end (cycle ends)
+- **Event Type (Aircraft)**: `ME_DMR_IE`
+  - **PATH**: micap_end > install_start > install_end
+- **Event Type (Cycle Restart)**: `DMR_CR_FS_FE`
+  - **Managers**: ac_manager, part_manager
+  - **PATH**: install_end > fleet_start > fleet_end
+  - Indicates AIRCRAFT & PART from MICAP resolved by depot part
 
 
 ---
 
-### 10. handle_aircraft_needs_part - Aircraft Completes Fleet
+### 9. handle_aircraft_needs_part - Aircraft Completes Fleet
+- **Function**: `handle_aircraft_needs_part(des_id)`
+- **Triggered by**: `fleet_complete` event
 
 **CASE B1: Part Available in CA**
-- `CAE_IE` = part_manager
-- PATH: condition_a_end > install_start > install_end
-- `FE_IE` = ac_manager
-- PATH: fleet_end > install_start > install_end
-- `CAP_CR_FS_FE` = part_manager, ac_manager
-- PATH: Fleet_start > fleet_end
-- to indicate AIRCRAFT received PART from condition_a
+- **Event Type (Part)**: `CAE_IE`
+  - **PATH**: condition_a_end > install_start > install_end
+- **Event Type (Aircraft)**: `FE_IE`
+  - **PATH**: fleet_end > install_start > install_end
+- **Event Type (Cycle Restart)**: `CAP_CR_FS_FE`
+  - **Managers**: part_manager, ac_manager
+  - **PATH**: install_end > fleet_start > fleet_end
+  - Indicates aircraft received part from Condition A
 
 **CASE B2: No Parts → Aircraft Goes MICAP**
-- `FE_MS` = ac_manager
-- PATH: fleet_end > micap_start
+- **Event Type**: `FE_MS`
+- **Managers**: ac_manager, micap_state
+- **PATH**: fleet_end > micap_start
 
 ---
 
-
-### 11. handle_new_part_arrives - New Part Arrives
+### 10. handle_new_part_arrives - New Part Arrives
+- **Function**: `handle_new_part_arrives(part_id)`
+- **Triggered by**: `new_part_arrives` event
 
 
 **PATH 1: No MICAP → Part to Condition A**
-- `NP_CA` = part_manager, cond_a_state
-- PATH: condition_a_start
+- **Event Type**: `NP_CA`
+- **Managers**: part_manager, cond_a_state
+- **PATH**: condition_a_start
 
 **PATH 2: MICAP exists → Install Directly**
-- `NP_NMR_IE` = part_manager
-- PATH: new_part > condition_a_start > condition_a_end > install_start > install_end
-- `ME_NMR_IE` = ac_manager
-- PATH: micap_end > install_start > install_end
+- **Event Type (Part)**: `NP_NMR_IE`
+  - **PATH**: condition_a_start > condition_a_end > install_start > install_end
+- **Event Type (Aircraft)**: `ME_NMR_IE`
+  - **PATH**: micap_end > install_start > install_end
+- **Event Type (Cycle Restart)**: `NMR_CR_FS_FE`
+  - **Managers**: part_manager, ac_manager
+  - **PATH**: install_end > fleet_start > fleet_end
+  - Indicates AIRCRAFT & PART from MICAP resolved by new part arrival
 
-- `NMR_CR_FS_FE` = part_manager, ac_manager
-- PATH: fleet_start > fleet_end
-- To indicate AIRCRAFT & PART was from MICAP resolved by NEW PART arrival
 
-
-
----
-
-### 12. event_cf_de - Condition F to Depot
-- `CF_DE` = part_manager
-- PATH: condition_f_start > condition_f_end > depot_start > depot_end
-- schedules `depot_complete`
 
 ---
 
-### 13. event_acp_fs_fe - Fleet Start to Fleet End
-- no event type assigned
-- PATH: install_end > fleet_start > fleet_end
-- updates fleet_end in part_manager and ac_manager
-- schedules `fleet_complete` and `part_fleet_end`
+### 11. event_cf_de - Condition F to Depot
+- **Function**: `event_cf_de(sim_id)`
+- **Triggered by**: `CF_DE` event
+- **Event Type**: `CF_DE`
+- **Managers**: part_manager
+- **PATH**: condition_f_start > condition_f_end > depot_start > depot_end
+- **Schedules**: `depot_complete` event
+- **Note**: Only used for initial condition parts (`IC_IjCF` or `IC_IZ_FS_FE, IC_FE_CF`)
 
 ---
 
-### 14. event_p_cfs_de - Part Fleet End to Depot End
+### 12. event_acp_fs_fe - Fleet Start to Fleet End
+- **Function**: `event_acp_fs_fe(s4_install_end, new_sim_id, new_des_id)`
+- **Event Type**: None (internal function, no event type assigned)
+- **Managers**: part_manager, ac_manager
+- **PATH**: install_end > fleet_start > fleet_end
+- **Updates**: fleet_end in part_manager and ac_manager
+- **Schedules**: `fleet_complete` and `part_fleet_end` events
 
-- `CFS_CFE` = part_manager (part has event regardless if condemn or not)
-- PATH: fleet_end > condition_f_start > condition_f_end
+---
 
-**Condemned Part:** old CONDEMN
-- `DS_DE_CONDEMN` = part_manager
-- PATH: depot_start > depot_end > CONDEMN
-- schedules `part_condemn`
+### 13. event_p_cfs_de - Part Fleet End to Depot End
+- **Function**: `event_p_cfs_de(sim_id)`
+- **Triggered by**: `part_fleet_end` event
 
-**Normal Part:**
-- `DS_DE` = part_manager
-- PATH: depot_start > depot_end
-- schedules `depot_complete`
+**Step 1: Condition F (all parts)**
+- **Event Type**: `CFS_CFE`
+- **Managers**: part_manager
+- **PATH**: fleet_end > condition_f_start > condition_f_end
+
+**Step 2a: Condemned Part**
+- **Event Type**: `DS_DE_CONDEMN`
+- **Managers**: part_manager
+- **PATH**: depot_start > depot_end > CONDEMN
+- **Schedules**: `part_condemn` event
+
+**Step 2b: Normal Part**
+- **Event Type**: `DS_DE`
+- **Managers**: part_manager
+- **PATH**: depot_start > depot_end
+- **Schedules**: `depot_complete` event
 
 
-### 15. event_p_condemn - Handle/schedule new part arrival
+### 14. event_p_condemn - Handle/Schedule New Part Arrival
+- **Function**: `event_p_condemn(sim_id)`
+- **Triggered by**: `part_condemn` event
+- **Schedules**: `new_part_arrives` event (after `part_order_lag` delay)
+- **Note**: This function schedules and logs old part and new part info for debugging. The actual new part arrival is handled by `handle_new_part_arrives()`
+---
 
-- this function schedules and logs old part and new part info for debugging
-- event type handle by engine.handle_new_part_arrives
-
-
+## Event Type Abbreviations
 
 CFS = condition_f_start
 CFE = condition_f_end
