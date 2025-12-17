@@ -210,63 +210,83 @@ This section documents all possible complete event paths observed in the simulat
 All possible event_path sequences for part cycles (alphabetical order):
 
 - **CAP_CR_FS_FE, CFS_CFE, DS_DE**
+  - **PATH**: install_end > fleet_start > fleet_end > condition_f_start > condition_f_end > depot_start > depot_end
   - Part from Condition A resolves aircraft need, operates in fleet, fails, enters Condition F, enters depot (simulation ends while in depot)
 
 - **CAP_CR_FS_FE, CFS_CFE, DS_DE, DE_CA, CAE_IE**
+  - **PATH**: install_end > fleet_start > fleet_end > condition_f_start > condition_f_end > depot_start > depot_end > condition_a_start > condition_a_end > install_start > install_end
   - Part from Condition A resolves aircraft need, operates in fleet, fails, goes through repair depot, returns to Condition A, then installs on aircraft needing part
 
 - **CAP_CR_FS_FE, CFS_CFE, DS_DE, DE_DMR_IE**
+  - **PATH**: install_end > fleet_start > fleet_end > condition_f_start > condition_f_end > depot_start > depot_end > install_start > install_end
   - Part from Condition A resolves aircraft need, operates in fleet, fails, goes through repair depot, directly installs on MICAP aircraft
 
 - **CAP_CR_FS_FE, CFS_CFE, DS_DE_CONDEMN**
+  - **PATH**: install_end > fleet_start > fleet_end > condition_f_start > condition_f_end > depot_start > depot_end > CONDEMN
   - Part from Condition A resolves aircraft need, operates in fleet, fails, enters depot and is condemned at end of cycle
 
 - **DMR_CR_FS_FE**
+  - **PATH**: install_end > fleet_start > fleet_end
   - Part that resolved MICAP from depot starts new fleet cycle (simulation ends during fleet operation)
 
 - **DMR_CR_FS_FE, CFS_CFE, DS_DE**
+  - **PATH**: install_end > fleet_start > fleet_end > condition_f_start > condition_f_end > depot_start > depot_end
   - Part that resolved MICAP from depot, operates in fleet, fails, enters Condition F, enters depot (simulation ends while in depot)
 
 - **DMR_CR_FS_FE, CFS_CFE, DS_DE, DE_CA, CAE_IE**
+  - **PATH**: install_end > fleet_start > fleet_end > condition_f_start > condition_f_end > depot_start > depot_end > condition_a_start > condition_a_end > install_start > install_end
   - Part that resolved MICAP from depot, operates in fleet, fails, goes through repair depot, returns to Condition A, then installs on aircraft needing part
 
 - **DMR_CR_FS_FE, CFS_CFE, DS_DE, DE_DMR_IE**
+  - **PATH**: install_end > fleet_start > fleet_end > condition_f_start > condition_f_end > depot_start > depot_end > install_start > install_end
   - Part that resolved MICAP from depot, operates in fleet, fails, goes through repair depot, directly installs on MICAP aircraft
 
 - **DMR_CR_FS_FE, CFS_CFE, DS_DE_CONDEMN**
+  - **PATH**: install_end > fleet_start > fleet_end > condition_f_start > condition_f_end > depot_start > depot_end > CONDEMN
   - Part that resolved MICAP from depot, operates in fleet, fails, enters depot and is condemned at end of cycle
 
 - **IC_CAP_FS_FE, IC_FE_CF**
+  - **PATH**: install_end > fleet_start > fleet_end > condition_f_start
   - Initial Condition A part resolves initial MICAP, operates in fleet, fails and enters Condition F (simulation ends before depot entry)
 
 - **IC_IjCA, IC_CAS_IE**
+  - **PATH**: condition_a_start > condition_a_end > install_start > install_end
   - Part starts in Condition A during initialization, immediately resolves initial MICAP aircraft during initialization phase
 
 - **IC_IjCF, CF_DE, DE_CA, CAE_IE**
+  - **PATH**: condition_f_start > condition_f_end > depot_start > depot_end > condition_a_start > condition_a_end > install_start > install_end
   - Part starts in Condition F during initialization, moves through depot, returns to Condition A, then installs on aircraft needing part
 
 - **IC_IjD, DE_CA, CAE_IE**
+  - **PATH**: depot_start > depot_end > condition_a_start > condition_a_end > install_start > install_end
   - Part starts in depot during initialization, completes repair, goes to Condition A, then installs on aircraft needing part
 
 - **IC_IjD, DE_DMR_IE**
+  - **PATH**: depot_start > depot_end > install_start > install_end
   - Part starts in depot during initialization, completes repair, directly installs on MICAP aircraft
 
 - **IC_IZ_FS_FE, IC_FE_CF, CF_DE, DE_CA, CAE_IE**
+  - **PATH**: fleet_start > fleet_end > condition_f_start > condition_f_end > depot_start > depot_end > condition_a_start > condition_a_end > install_start > install_end
   - Part starts operating in fleet during initialization, fails, goes through Condition F and depot, returns to Condition A, then installs on aircraft needing part
 
 - **IC_IZ_FS_FE, IC_FE_CF, CF_DE, DE_DMR_IE**
+  - **PATH**: fleet_start > fleet_end > condition_f_start > condition_f_end > depot_start > depot_end > install_start > install_end
   - Part starts operating in fleet during initialization, fails, goes through Condition F and depot, directly installs on MICAP aircraft
 
 - **NMR_CR_FS_FE**
+  - **PATH**: install_end > fleet_start > fleet_end
   - New part that resolved MICAP starts new fleet cycle (simulation ends during fleet operation)
 
 - **NMR_CR_FS_FE, CFS_CFE, DS_DE**
+  - **PATH**: install_end > fleet_start > fleet_end > condition_f_start > condition_f_end > depot_start > depot_end
   - New part that resolved MICAP, operates in fleet, fails, enters Condition F, enters depot (simulation ends while in depot)
 
 - **NMR_CR_FS_FE, CFS_CFE, DS_DE, DE_DMR_IE**
+  - **PATH**: install_end > fleet_start > fleet_end > condition_f_start > condition_f_end > depot_start > depot_end > install_start > install_end
   - New part that resolved MICAP, operates in fleet, fails, goes through repair depot, directly installs on MICAP aircraft
 
 - **NP_NMR_IE**
+  - **PATH**: condition_a_start > condition_a_end > install_start > install_end
   - New part arrives after condemnation, immediately installs on waiting MICAP aircraft (cycle ends at installation)
 
 ### Aircraft Lifecycle Paths
@@ -274,55 +294,73 @@ All possible event_path sequences for part cycles (alphabetical order):
 All possible event_path sequences for aircraft cycles (alphabetical order):
 
 - **CAP_CR_FS_FE, FE_IE**
+  - **PATH**: install_end > fleet_start > fleet_end > install_start > install_end
   - Aircraft receives part from Condition A, operates in fleet, completes operation and receives another part from Condition A
 
 - **CAP_CR_FS_FE, FE_MS, ME_DMR_IE**
+  - **PATH**: install_end > fleet_start > fleet_end > micap_start > micap_end > install_start > install_end
   - Aircraft receives part from Condition A, operates in fleet, part fails and no parts available so enters MICAP, resolved by depot part
 
 - **CAP_CR_FS_FE, FE_MS, ME_NMR_IE**
+  - **PATH**: install_end > fleet_start > fleet_end > micap_start > micap_end > install_start > install_end
   - Aircraft receives part from Condition A, operates in fleet, part fails and no parts available so enters MICAP, resolved by new part
 
 - **DMR_CR_FS_FE**
+  - **PATH**: install_end > fleet_start > fleet_end
   - Aircraft MICAP resolved by depot part, starts new fleet cycle (simulation ends during fleet operation)
 
 - **DMR_CR_FS_FE, FE_IE**
+  - **PATH**: install_end > fleet_start > fleet_end > install_start > install_end
   - Aircraft MICAP resolved by depot part, operates in fleet, completes operation and receives part from Condition A
 
 - **DMR_CR_FS_FE, FE_MS**
+  - **PATH**: install_end > fleet_start > fleet_end > micap_start
   - Aircraft MICAP resolved by depot part, operates in fleet, part fails and enters MICAP (simulation ends while in MICAP)
 
 - **DMR_CR_FS_FE, FE_MS, ME_DMR_IE**
+  - **PATH**: install_end > fleet_start > fleet_end > micap_start > micap_end > install_start > install_end
   - Aircraft MICAP resolved by depot part, operates in fleet, part fails and no parts available so enters MICAP, resolved by depot part
 
 - **DMR_CR_FS_FE, FE_MS, ME_NMR_IE**
+  - **PATH**: install_end > fleet_start > fleet_end > micap_start > micap_end > install_start > install_end
   - Aircraft MICAP resolved by depot part, operates in fleet, part fails and no parts available so enters MICAP, resolved by new part
 
 - **IC_IZ_FS_FE, FE_IE**
+  - **PATH**: fleet_start > fleet_end > install_start > install_end
   - Aircraft starts operating in fleet during initialization, completes operation and receives part from Condition A
 
 - **IC_IZ_FS_FE, FE_MS, ME_DMR_IE**
+  - **PATH**: fleet_start > fleet_end > micap_start > micap_end > install_start > install_end
   - Aircraft starts operating in fleet during initialization, part fails and no parts available so enters MICAP, resolved by depot part
 
 - **IC_MAC_FS_FE, FE_IE**
+  - **PATH**: install_end > fleet_start > fleet_end > install_start > install_end
   - Aircraft initial MICAP resolved during initialization, operates in fleet, completes operation and receives part from Condition A
 
 - **IC_MAC_FS_FE, FE_MS, ME_DMR_IE**
+  - **PATH**: install_end > fleet_start > fleet_end > micap_start > micap_end > install_start > install_end
   - Aircraft initial MICAP resolved during initialization, operates in fleet, part fails and no parts available so enters MICAP, resolved by depot part
 
 - **IC_MS, IC_MS_IE**
+  - **PATH**: micap_start > micap_end > install_start > install_end
   - Aircraft starts in MICAP during initialization, immediately resolved by Condition A part during initialization phase
 
 - **IC_MS, ME_DMR_IE**
+  - **PATH**: micap_start > micap_end > install_start > install_end
   - Aircraft starts in MICAP during initialization, resolved by depot part completing repair
 
 - **NMR_CR_FS_FE**
+  - **PATH**: install_end > fleet_start > fleet_end
   - Aircraft MICAP resolved by new part, starts new fleet cycle (simulation ends during fleet operation)
 
 - **NMR_CR_FS_FE, FE_MS**
+  - **PATH**: install_end > fleet_start > fleet_end > micap_start
   - Aircraft MICAP resolved by new part, operates in fleet, part fails and enters MICAP (simulation ends while in MICAP)
 
 - **NMR_CR_FS_FE, FE_MS, ME_DMR_IE**
+  - **PATH**: install_end > fleet_start > fleet_end > micap_start > micap_end > install_start > install_end
   - Aircraft MICAP resolved by new part, operates in fleet, part fails and no parts available so enters MICAP, resolved by depot part
 
 - **NMR_CR_FS_FE, FE_MS, ME_NMR_IE**
+  - **PATH**: install_end > fleet_start > fleet_end > micap_start > micap_end > install_start > install_end
   - Aircraft MICAP resolved by new part, operates in fleet, part fails and no parts available so enters MICAP, resolved by new part
