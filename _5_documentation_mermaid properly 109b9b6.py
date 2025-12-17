@@ -91,3 +91,8 @@ st.page_link("main.py", label="← Back to Home", icon="🏠")
 # this is the file where i start to remove the pdf checking
 # realize erros happen before this push so then doing this prechecking im doing now
 # is not working out because i thought code properly work before i started removing pdf checking
+
+
+# this file also gives syntax errors
+# but notice this one the style is different, like this one follow more the light setting of page
+# push before this one had a default light setting i think because it was white bckground

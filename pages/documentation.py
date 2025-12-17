@@ -5,6 +5,8 @@ Documentation page displaying model architecture, development, and mathematical 
 """
 import streamlit as st
 from pathlib import Path
+import base64
+import requests
 import re
 import streamlit.components.v1 as components
 
@@ -36,20 +38,13 @@ docs = {
 def render_mermaid(mermaid_code):
     """Render a mermaid diagram using HTML/JS"""
     html_code = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <script type="module">
-            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-            mermaid.initialize({{ startOnLoad: true }});
-        </script>
-    </head>
-    <body style="margin: 0; padding: 0;">
-        <div class="mermaid">
-{mermaid_code}
-        </div>
-    </body>
-    </html>
+    <div class="mermaid" style="background-color: white; padding: 20px; border-radius: 5px;">
+        {mermaid_code}
+    </div>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({{ startOnLoad: true }});
+    </script>
     """
     components.html(html_code, height=600, scrolling=True)
 
@@ -75,14 +70,29 @@ for tab, (title, filename) in zip(tabs, docs.items()):
     with tab:
         doc_path = DOCS_DIR / filename
         
-        # Handle files with mermaid diagrams
-        if filename in ["flowchart.md", "uml-classes.md"]:
-            content = doc_path.read_text(encoding="utf-8")
-            process_markdown_with_mermaid(content)
+        # Handle flowchart.md from GitHub
+        if filename == "flowchart.md":
+            try:
+                response = requests.get("https://raw.githubusercontent.com/1Ramirez7/draft_des/refs/heads/main/docs/flowchart.md")
+                response.raise_for_status()
+                content = response.text
+                process_markdown_with_mermaid(content)
+            except Exception as e:
+                st.error(f"Error loading flowchart from GitHub: {e}")
+        elif doc_path.exists():
+            # Handle PDF files differently from markdown files
+            if filename.endswith('.pdf'):
+                # Read PDF as binary and display in iframe
+                with open(doc_path, "rb") as f:
+                    base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+                pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>'
+                st.markdown(pdf_display, unsafe_allow_html=True)
+            else:
+                # Display markdown files
+                content = doc_path.read_text(encoding="utf-8")
+                st.markdown(content)
         else:
-            # Handle regular markdown files
-            content = doc_path.read_text(encoding="utf-8")
-            st.markdown(content)
+            st.error(f"Documentation file not found: {filename}")
 
 st.markdown("---")
 st.page_link("main.py", label="← Back to Home", icon="🏠")

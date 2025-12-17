@@ -97,4 +97,9 @@ for tab, (title, filename) in zip(tabs, docs.items()):
 st.markdown("---")
 st.page_link("main.py", label="← Back to Home", icon="🏠")
 
+# there has to be a cache issue somewhere
+# testing this push now is not working locally, I'm certain when i first push this it worked.
+# I've noticing some cache issues where sometimes mermaid renders and then it doesn't 
+# event though did not change code just refresh page
 
+# i deleted cache folders and still had syntax error before deploying
